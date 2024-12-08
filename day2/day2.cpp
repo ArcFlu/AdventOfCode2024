@@ -20,7 +20,7 @@ void printArray(std::vector<int> arr)
     std::cout << "\n";
 }
 
-bool isSafeReport(std::vector<int> arr);
+bool isSafeReport(std::vector<int> arr, bool isSecondPass);
 
 int main()
 {
@@ -43,13 +43,14 @@ int main()
             while (lineInput >> word)
             {
                 arr.push_back(std::stoi(word));
-                std::cout << word << std::endl;
             }
 
             printArray(arr);
-            if (isSafeReport(arr))
+            std::cout << (isSafeReport(arr, false) ? "safe" : "unsafe") << std::endl
+                      << std::endl;
+
+            if (isSafeReport(arr, false))
             {
-                std::cout << isSafeReport(arr);
                 safeReports++;
             }
         }
@@ -58,7 +59,7 @@ int main()
     std::cout << "Number of Safe Reports: " << safeReports << std::endl;
 }
 
-bool isSafeReport(std::vector<int> arr)
+bool isSafeReport(std::vector<int> arr, bool isSecondPass)
 {
     if (arr.size() < 2)
     {
@@ -81,5 +82,41 @@ bool isSafeReport(std::vector<int> arr)
         j++;
     } while (isIncreasing != isDecreasing && isSafeDiffer && j < arr.size());
 
-    return isIncreasing != isDecreasing && isSafeDiffer;
+    bool result1 = isIncreasing != isDecreasing && isSafeDiffer;
+
+    // For Tomorrow: which element to remove depending on increase/decrease.
+    // Given an array of [0, i, j, 9], I need to check whether
+    // [0, i, 9] or [0, j, 9] is valid
+    // omg... i just delete the element bruh
+    if (!result1 && j < arr.size() && !isSecondPass)
+    {
+        // Remove value at index i from arr2
+        std::vector<int> arr2;
+        std::vector<int> arr3;
+
+        arr2.reserve(arr.size() - 1);
+        for (int idx = 0; idx < arr.size(); ++idx)
+        {
+            if (idx != i)
+            {
+                arr2.push_back(arr[idx]);
+            }
+        }
+
+        // Remove value at index j from arr3
+        arr3.reserve(arr.size() - 1);
+        for (int idx = 0; idx < arr.size(); ++idx)
+        {
+            if (idx != j)
+            {
+                arr3.push_back(arr[idx]);
+            }
+        }
+
+        bool result2 = isSafeReport(arr2, true);
+        bool result3 = isSafeReport(arr3, true);
+        return result2 || result3;
+    }
+
+    return result1;
 }
