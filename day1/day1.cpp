@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <set>
+#include <map>
 
 void printArray(std::vector<int> arr)
 {
@@ -94,6 +96,7 @@ void quickSort(std::vector<int> &partitionArr, int leftPointer, int rightPointer
 int main()
 {
     std::ifstream input("day1_real.txt");
+    // std::ifstream input("day1_input.txt");
     std::string word;
     std::vector<int> arr1;
     std::vector<int> arr2;
@@ -128,5 +131,22 @@ int main()
         sum += abs(arr1[i] - arr2[i]);
     }
 
-    std::cout << "Sum: " << sum;
+    std::cout << "Sum: " << sum << "\n";
+
+    // Calculate similarities
+    std::map<int, int> mapOfArr2;
+
+    for (int value : arr2)
+    {
+        mapOfArr2[value]++; // Increment count for the value
+    }
+
+    int part2Sum = 0;
+    for (int i : arr1)
+    {
+        int product = mapOfArr2[i] * i;
+        std::cout << "Product: " << product << " ";
+        part2Sum += product;
+    }
+    std::cout << "\nPart2Sum: " << part2Sum << "\n";
 }
