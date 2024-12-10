@@ -35,6 +35,19 @@ std::vector<int> splitString(const std::string &str, char delimiter)
     return result;
 }
 
+void calcSumGivenMulStrings(std::vector<std::string> matches)
+{
+    // Parse matches and calculate sum
+    int sum = 0;
+    for (auto s : matches)
+    {
+        std::vector<int> intSplit = splitString(s.erase(0, s.find('(') + 1), ',');
+        sum += intSplit[0] * intSplit[1];
+    }
+
+    std::cout << sum;
+};
+
 int main()
 {
     // std::ifstream input("sample.txt");
@@ -50,7 +63,7 @@ int main()
         // std::cout << fileString;
 
         // Approach: Use regex to find expressions in form mul(\d,\d)
-        std::regex regularExpression("mul\\(\\d+,\\d+\\)");
+        std::regex regularExpression("mul\\(\\d+,\\d+\\)|do\\(\\)|don't\\(\\)");
         std::vector<std::string> matches;
 
         std::regex_iterator<std::string::iterator> it(fileString.begin(), fileString.end(), regularExpression);
@@ -64,14 +77,34 @@ int main()
             ++it;
         }
 
-        // Parse matches and calculate sum
-        int sum = 0;
-        for (auto s : matches)
+        // get rid of Dos and Donts
+        bool doFlag = true;
+        std::string doString = "do()";
+        std::string dontString = "don't()";
+
+        std::vector<std::string> mulMatches;
+
+        for (int i = 0; i < matches.size(); i++)
         {
-            std::vector<int> intSplit = splitString(s.erase(0, 4), ',');
-            sum += intSplit[0] * intSplit[1];
+            std::string string = matches[i];
+
+            if (string == doString)
+            {
+                doFlag = true;
+                continue;
+            }
+            else if (string == dontString)
+            {
+                doFlag = false;
+                continue;
+            }
+
+            if (doFlag)
+            {
+                mulMatches.push_back(string);
+            }
         }
 
-        std::cout << sum;
+        calcSumGivenMulStrings(mulMatches);
     }
 }
